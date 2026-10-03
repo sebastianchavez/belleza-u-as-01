@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmación · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-8">
+        <div class="checkmark-circle mx-auto">
+          <div class="background"></div>
+          <div class="checkmark"></div>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mt-8 mb-3" style="font-family: 'Playfair Display', serif;">¡Cita confirmada!</h1>
+        <p class="text-gray-300 text-lg">Tu reserva ha sido agendada exitosamente</p>
+      </div>
+
+      <div id="reservaBox" class="bg-background-card border border-gray-800 rounded-2xl p-8 mb-6"></div>
+
+      <div class="bg-background-card border border-primary/30 rounded-2xl p-6 text-center mb-6">
+        <p class="text-xs text-primary uppercase tracking-widest font-semibold mb-2">Número de confirmación</p>
+        <p id="codigoReserva" class="text-3xl font-bold text-primary tracking-widest" style="font-family: 'Playfair Display', serif;">BPS-000000</p>
+        <p class="text-xs text-gray-500 mt-2">Guarda este código para cualquier consulta</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button id="btnCalendar" class="btn-outline text-sm">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Añadir al calendario
+        </button>
+        <button id="btnPay" class="btn-primary text-sm">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+          Ir a pagar
+        </button>
+        <a id="btnDetail" href="#" class="btn-outline text-sm">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          Ver detalle
+        </a>
+      </div>
+
+      <div class="text-center mt-10 text-sm text-gray-400">
+        <p>Hemos enviado los detalles a tu correo electrónico.</p>
+        <p class="mt-2">¿Necesitas ayuda? <a href="contacto.html" class="text-primary hover:underline">Contáctanos</a></p>
+      </div>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    function pageInit() {
+      const reservaId = Storage.get('bps_reserva_actual');
+      const params = new URLSearchParams(window.location.search);
+      const urlId = params.get('reserva');
+      let reserva = null;
+      if (urlId) reserva = Reservas.get(urlId);
+      else if (reservaId) reserva = Reservas.get(reservaId);
+
+      if (!reserva) {
+        document.querySelector('main').innerHTML = '<p class="text-center text-gray-400 py-20">No hay reserva reciente.</p>';
+        return;
+      }
+      renderReserva(reserva);
+
+      function renderReserva(r) {
+        const servicio = UI.servicioById(r.servicioId);
+        const prof = UI.profesionalById(r.profesionalId);
+        const codigo = 'BPS-' + r.id.slice(-6).toUpperCase();
+        document.getElementById('codigoReserva').textContent = codigo;
+
+        document.getElementById('reservaBox').innerHTML = `
+          <h2 class="text-xl font-bold text-white mb-6" style="font-family: 'Playfair Display', serif;">Resumen de tu cita</h2>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 pb-4 border-b border-gray-800">
+              <img src="${servicio.imagen}" class="h-14 w-14 rounded-lg object-cover"/>
+              <div>
+                <p class="text-xs text-primary uppercase tracking-wider">Servicio</p>
+                <p class="text-white font-semibold">${servicio.nombre}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 pb-4 border-b border-gray-800">
+              <img src="${prof.foto}" class="h-14 w-14 rounded-full object-cover"/>
+              <div>
+                <p class="text-xs text-primary uppercase tracking-wider">Manicurista</p>
+                <p class="text-white font-semibold">${prof.nombre}</p>
+                <p class="text-gray-400 text-xs">${prof.rol}</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-800">
+              <div>
+                <p class="text-xs text-primary uppercase tracking-wider">Fecha</p>
+                <p class="text-white font-semibold">${UI.formatDate(r.fecha)}</p>
+              </div>
+              <div>
+                <p class="text-xs text-primary uppercase tracking-wider">Hora</p>
+                <p class="text-white font-semibold">${r.hora}</p>
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <p class="text-gray-400">Total</p>
+              <p class="text-primary text-2xl font-bold" style="font-family: 'Playfair Display', serif;">${UI.formatPrice(UI.reservaPrecio(r))}</p>
+            </div>
+            <div class="pt-4 border-t border-gray-800">
+              <span class="text-xs uppercase ${UI.estadoBadge(r.estado).cls} px-3 py-1 rounded-full border">${UI.estadoBadge(r.estado).label}</span>
+              ${r.pago === 'pagado' ? `<span class="ml-2 text-xs uppercase ${UI.pagoBadge(r.pago).cls} px-3 py-1 rounded-full border">${UI.pagoBadge(r.pago).label}</span>` : ''}
+            </div>
+          </div>
+        `;
+
+        document.getElementById('btnDetail').href = 'detalle-reserva.html?id=' + r.id;
+        const payBtn = document.getElementById('btnPay');
+        if (r.pago === 'pagado') payBtn.style.display = 'none';
+
+        document.getElementById('btnPay').addEventListener('click', () => {
+          window.location.href = 'pago.html?reserva=' + r.id;
+        });
+
+        document.getElementById('btnCalendar').addEventListener('click', () => {
+          const start = `${r.fecha}T${r.hora}:00`;
+          const endDate = new Date(start);
+          endDate.setMinutes(endDate.getMinutes() + servicio.duracion);
+          const startStr = r.fecha.replace(/-/g, '') + 'T' + r.hora.replace(':', '') + '00';
+          const endStr = endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '').slice(0, 15);
+          const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(servicio.nombre + ' - Nails Studio')}&dates=${startStr}/${endStr}&details=${encodeURIComponent('Cita con ' + prof.nombre + ' en Nails Studio')}`;
+          window.open(url, '_blank');
+        });
+      }
+    }
+  </script>
+</body>
+</html>

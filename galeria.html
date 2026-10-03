@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galería · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="galeria" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main>
+    <section class="py-20 border-b border-primary/10">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-primary uppercase tracking-[0.3em] text-xs mb-3 font-medium">Nuestro portafolio</p>
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-6" style="font-family: 'Playfair Display', serif;">Galería</h1>
+        <p class="text-gray-300 text-lg max-w-2xl mx-auto">Inspírate con nuestros trabajos. Cada diseño es una obra única.</p>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap justify-center gap-2 mb-10" id="filterGaleria"></div>
+        <div class="gallery-grid" id="galeriaGrid"></div>
+      </div>
+    </section>
+
+    <section class="py-16 bg-background-card/40 border-t border-primary/10">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">¿Te gustó algún diseño?</h2>
+        <p class="text-gray-400 mb-8 max-w-2xl mx-auto">Reserva tu cita y creamos un diseño personalizado para ti</p>
+        <a href="reserva.html" class="btn-primary">Reservar cita</a>
+      </div>
+    </section>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    function pageInit() {
+      const cats = ['todas', 'manos', 'esculpidas', 'arte', 'pies'];
+      const labels = { todas: 'Todas', manos: 'Manos', esculpidas: 'Esculpidas', arte: 'Arte', pies: 'Pies' };
+      const filter = document.getElementById('filterGaleria');
+      filter.innerHTML = cats.map((c, i) => `
+        <button data-cat="${c}" class="cat-tab px-5 py-2 rounded-full text-sm font-semibold transition-all ${i === 0 ? 'bg-primary text-black' : 'bg-background-card text-gray-300 border border-gray-800 hover:border-primary'}">${labels[c]}</button>
+      `).join('');
+
+      const grid = document.getElementById('galeriaGrid');
+      function render(cat) {
+        const list = cat === 'todas' ? GALERIA : GALERIA.filter(g => g.cat === cat);
+        grid.innerHTML = list.map((g, idx) => `
+          <div class="galeria-item border border-primary/10 relative group" data-idx="${idx}" data-url="${g.url}">
+            <img src="${g.url}" alt="${g.titulo}" class="w-full h-full object-cover"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+              <div>
+                <span class="text-[10px] uppercase tracking-widest text-primary font-semibold">${UI.categoriaLabel(g.cat)}</span>
+                <p class="text-white font-semibold">${g.titulo}</p>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        grid.querySelectorAll('.galeria-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const url = item.dataset.url;
+            const lb = document.createElement('div');
+            lb.className = 'lightbox';
+            lb.innerHTML = `<img src="${url}" alt=""/><button class="absolute top-6 right-6 text-white text-3xl">&times;</button>`;
+            document.body.appendChild(lb);
+            const close = () => lb.remove();
+            lb.addEventListener('click', close);
+          });
+        });
+      }
+      render('todas');
+
+      filter.querySelectorAll('.cat-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          filter.querySelectorAll('.cat-tab').forEach(t => { t.classList.remove('bg-primary', 'text-black'); t.classList.add('bg-background-card', 'text-gray-300', 'border', 'border-gray-800'); });
+          tab.classList.add('bg-primary', 'text-black');
+          tab.classList.remove('bg-background-card', 'text-gray-300', 'border', 'border-gray-800');
+          render(tab.dataset.cat);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="perfil" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <aside class="lg:col-span-1">
+        <div class="bg-background-card border border-gray-800 rounded-2xl p-6 lg:sticky lg:top-28">
+          <div class="text-center mb-6">
+            <div class="relative inline-block">
+              <img id="avatarImg" src="" class="h-24 w-24 rounded-full object-cover border-2 border-primary/40"/>
+              <button id="btnChangePhoto" class="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary text-black flex items-center justify-center hover:bg-primary-light transition-colors">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 2h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              </button>
+            </div>
+            <h3 id="userName" class="text-white font-bold mt-3 text-lg" style="font-family: 'Playfair Display', serif;"></h3>
+            <p id="userEmail" class="text-gray-400 text-sm"></p>
+            <span class="inline-block mt-2 text-xs bg-primary/10 text-primary border border-primary/30 px-3 py-1 rounded-full">Miembro Premium</span>
+          </div>
+
+          <nav class="space-y-1">
+            <button data-tab="historial" class="tab-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              Mis reservas
+            </button>
+            <button data-tab="datos" class="tab-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-primary/5 transition-colors">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              Mis datos
+            </button>
+            <button data-tab="seguridad" class="tab-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-primary/5 transition-colors">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              Seguridad
+            </button>
+            <a href="reserva.html" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-primary/5 transition-colors">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Nueva reserva
+            </a>
+            <button id="btnLogoutSide" class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors mt-3 border-t border-gray-800 pt-3">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              Cerrar sesión
+            </button>
+          </nav>
+        </div>
+      </aside>
+
+      <section class="lg:col-span-3 space-y-6">
+        <div id="tab-historial">
+          <div class="flex items-center justify-between flex-wrap gap-3 mb-5">
+            <div>
+              <h2 class="text-3xl font-bold text-white" style="font-family: 'Playfair Display', serif;">Mis reservas</h2>
+              <p class="text-gray-400 text-sm mt-1">Historial completo de tus citas</p>
+            </div>
+            <a href="reserva.html" class="btn-primary text-sm">+ Nueva reserva</a>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-5" id="filterEstado">
+            <button data-filter="todas" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-primary bg-primary text-black">Todas</button>
+            <button data-filter="pendiente" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-gray-700 text-gray-300 hover:border-primary">Pendientes</button>
+            <button data-filter="confirmada" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-gray-700 text-gray-300 hover:border-primary">Confirmadas</button>
+            <button data-filter="completada" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-gray-700 text-gray-300 hover:border-primary">Completadas</button>
+            <button data-filter="anulada" class="filter-btn px-4 py-1.5 rounded-full text-xs font-semibold border border-gray-700 text-gray-300 hover:border-primary">Anuladas</button>
+          </div>
+          <div id="reservasList" class="space-y-3"></div>
+        </div>
+
+        <div id="tab-datos" class="hidden">
+          <h2 class="text-3xl font-bold text-white mb-5" style="font-family: 'Playfair Display', serif;">Mis datos</h2>
+          <div class="bg-background-card border border-gray-800 rounded-2xl p-6">
+            <form id="datosForm" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="label-base">Nombre completo</label>
+                  <input type="text" name="nombre" id="inputNombre" required class="input-base"/>
+                </div>
+                <div>
+                  <label class="label-base">Teléfono</label>
+                  <input type="tel" name="telefono" id="inputTelefono" class="input-base"/>
+                </div>
+              </div>
+              <div>
+                <label class="label-base">Email</label>
+                <input type="email" name="email" id="inputEmail" required class="input-base"/>
+              </div>
+              <div id="datosMsg" class="hidden text-sm bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-lg p-3">Datos actualizados correctamente.</div>
+              <div class="flex justify-end">
+                <button type="submit" class="btn-primary">Guardar cambios</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="tab-seguridad" class="hidden">
+          <h2 class="text-3xl font-bold text-white mb-5" style="font-family: 'Playfair Display', serif;">Seguridad</h2>
+          <div class="bg-background-card border border-gray-800 rounded-2xl p-6">
+            <form id="seguridadForm" class="space-y-4">
+              <div>
+                <label class="label-base">Contraseña actual</label>
+                <input type="password" name="current" required class="input-base"/>
+              </div>
+              <div>
+                <label class="label-base">Nueva contraseña</label>
+                <input type="password" name="newP" required minlength="6" class="input-base"/>
+              </div>
+              <div>
+                <label class="label-base">Confirmar nueva contraseña</label>
+                <input type="password" name="confirm" required minlength="6" class="input-base"/>
+              </div>
+              <div id="segMsg" class="hidden text-sm rounded-lg p-3"></div>
+              <div class="flex justify-end">
+                <button type="submit" class="btn-primary">Cambiar contraseña</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    let currentUser = null;
+    let currentFilter = 'todas';
+
+    function loadReservas() {
+      const list = currentUser ? Reservas.listByUser(currentUser.id) : [];
+      const filtered = currentFilter === 'todas' ? list : list.filter(r => r.estado === currentFilter);
+      filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      const box = document.getElementById('reservasList');
+      if (!filtered.length) {
+        box.innerHTML = `
+          <div class="bg-background-card border border-gray-800 rounded-2xl p-10 text-center">
+            <svg class="h-12 w-12 text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <p class="text-gray-400 mb-4">No tienes reservas ${currentFilter !== 'todas' ? 'con ese estado' : 'aún'}</p>
+            <a href="reserva.html" class="btn-primary inline-block">Reservar ahora</a>
+          </div>`;
+        return;
+      }
+
+      box.innerHTML = filtered.map(r => {
+        const s = UI.servicioById(r.servicioId);
+        const p = UI.profesionalById(r.profesionalId);
+        const eb = UI.estadoBadge(r.estado);
+        const pb = UI.pagoBadge(r.pago);
+        const past = UI.isPastDate(r.fecha);
+        return `
+          <div class="bg-background-card border border-gray-800 rounded-2xl p-5 hover:border-primary/30 transition-all">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <img src="${s.imagen}" alt="${s.nombre}" class="h-20 w-20 sm:h-24 sm:w-24 rounded-xl object-cover flex-shrink-0"/>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between flex-wrap gap-2 mb-2">
+                  <div>
+                    <h3 class="text-white font-bold text-lg" style="font-family: 'Playfair Display', serif;">${s.nombre}</h3>
+                    <p class="text-sm text-gray-400">con ${p ? p.nombre : '—'}</p>
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span class="text-xs uppercase ${eb.cls} px-3 py-1 rounded-full border">${eb.label}</span>
+                    <span class="text-xs uppercase ${pb.cls} px-3 py-1 rounded-full border">${pb.label}</span>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm mt-3">
+                  <div>
+                    <p class="text-xs text-gray-500">Fecha</p>
+                    <p class="text-white font-medium">${UI.formatDate(r.fecha)}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">Hora</p>
+                    <p class="text-white font-medium">${r.hora}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">Total</p>
+                    <p class="text-primary font-bold" style="font-family: 'Playfair Display', serif;">${UI.formatPrice(UI.reservaPrecio(r))}</p>
+                  </div>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-800">
+                  <a href="detalle-reserva.html?id=${r.id}" class="btn-outline text-xs px-3 py-1.5">Ver detalle</a>
+                  ${r.estado === 'pendiente' ? `<a href="pago.html?reserva=${r.id}" class="btn-primary text-xs px-3 py-1.5">Pagar</a>` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function bindTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('text-primary', 'bg-primary/10');
+            b.classList.add('text-gray-300');
+          });
+          btn.classList.add('text-primary', 'bg-primary/10');
+          btn.classList.remove('text-gray-300');
+          ['historial', 'datos', 'seguridad'].forEach(t => {
+            document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+          });
+        });
+      });
+      const first = document.querySelector('.tab-btn');
+      if (first) { first.classList.add('text-primary', 'bg-primary/10'); first.classList.remove('text-gray-300'); }
+    }
+
+    function bindFilters() {
+      document.querySelectorAll('#filterEstado .filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#filterEstado .filter-btn').forEach(b => {
+            b.classList.remove('bg-primary', 'text-black', 'border-primary');
+            b.classList.add('border-gray-700', 'text-gray-300');
+          });
+          btn.classList.add('bg-primary', 'text-black', 'border-primary');
+          btn.classList.remove('border-gray-700', 'text-gray-300');
+          currentFilter = btn.dataset.filter;
+          loadReservas();
+        });
+      });
+    }
+
+    function bindDatos() {
+      document.getElementById('datosForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        Auth.update(currentUser.id, { nombre: data.nombre, telefono: data.telefono, email: data.email });
+        currentUser = Auth.current();
+        const msg = document.getElementById('datosMsg');
+        msg.classList.remove('hidden');
+        setTimeout(() => msg.classList.add('hidden'), 3000);
+        UI.toast('Datos actualizados');
+        loadHeader();
+      });
+    }
+
+    function bindSeguridad() {
+      document.getElementById('seguridadForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        const msg = document.getElementById('segMsg');
+        msg.classList.remove('hidden', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'bg-red-500/10', 'border-red-500/30', 'text-red-400');
+        if (data.newP !== data.confirm) {
+          msg.classList.add('bg-red-500/10', 'border', 'border-red-500/30', 'text-red-400');
+          msg.textContent = 'Las contraseñas no coinciden.';
+          return;
+        }
+        const result = Auth.changePassword(currentUser.id, data.current, data.newP);
+        if (!result.ok) {
+          msg.classList.add('bg-red-500/10', 'border', 'border-red-500/30', 'text-red-400');
+          msg.textContent = result.error;
+          return;
+        }
+        msg.classList.add('bg-emerald-500/10', 'border', 'border-emerald-500/30', 'text-emerald-300');
+        msg.textContent = 'Contraseña actualizada correctamente.';
+        e.target.reset();
+        UI.toast('Contraseña cambiada');
+      });
+    }
+
+    function bindLogoutSide() {
+      document.getElementById('btnLogoutSide').addEventListener('click', () => {
+        Auth.logout();
+        UI.toast('Sesión cerrada');
+        setTimeout(() => window.location.href = 'index.html', 600);
+      });
+    }
+
+    function loadHeader() {
+      currentUser = Auth.current();
+      if (!currentUser) { window.location.href = 'inicio-sesion.html'; return; }
+      document.getElementById('avatarImg').src = currentUser.foto;
+      document.getElementById('userName').textContent = currentUser.nombre;
+      document.getElementById('userEmail').textContent = currentUser.email;
+      document.getElementById('inputNombre').value = currentUser.nombre;
+      document.getElementById('inputEmail').value = currentUser.email;
+      document.getElementById('inputTelefono').value = currentUser.telefono || '';
+    }
+
+    function pageInit() {
+      currentUser = Auth.current();
+      if (!currentUser) {
+        Storage.set('bps_redirect', 'perfil.html');
+        window.location.href = 'inicio-sesion.html';
+        return;
+      }
+      loadHeader();
+      bindTabs();
+      bindFilters();
+      bindDatos();
+      bindSeguridad();
+      bindLogoutSide();
+      loadReservas();
+    }
+  </script>
+</body>
+</html>

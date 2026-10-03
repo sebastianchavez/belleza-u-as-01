@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4">
+    <div class="w-full max-w-lg">
+      <div class="text-center mb-8">
+        <div class="inline-block h-16 w-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary mb-4">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Crear cuenta</h1>
+        <p class="text-gray-400 text-sm">Únete y disfruta beneficios exclusivos</p>
+        <div id="planSelecto" class="hidden mt-4 inline-block bg-primary/10 border border-primary/30 rounded-full px-4 py-1.5 text-sm">
+          <span class="text-primary">Plan seleccionado: </span>
+          <span id="planNombre" class="text-white font-semibold capitalize"></span>
+        </div>
+      </div>
+
+      <div class="bg-background-card border border-gray-800 rounded-2xl p-7">
+        <form id="registerForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="label-base">Nombre completo</label>
+              <input type="text" name="nombre" required class="input-base" placeholder="Tu nombre"/>
+            </div>
+            <div>
+              <label class="label-base">Teléfono</label>
+              <input type="tel" name="telefono" class="input-base" placeholder="+56 9 0000 0000"/>
+            </div>
+          </div>
+          <div>
+            <label class="label-base">Email</label>
+            <input type="email" name="email" required class="input-base" placeholder="tu@email.com"/>
+          </div>
+          <div>
+            <label class="label-base">Contraseña</label>
+            <input type="password" name="password" required minlength="6" class="input-base" placeholder="Mínimo 6 caracteres"/>
+            <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+          </div>
+          <div>
+            <label class="label-base">Confirmar contraseña</label>
+            <input type="password" name="confirmPassword" required minlength="6" class="input-base" placeholder="Repite tu contraseña"/>
+          </div>
+          <div class="space-y-2 pt-2">
+            <label class="flex items-start gap-2 text-sm text-gray-300 cursor-pointer">
+              <input type="checkbox" name="terminos" required class="mt-0.5 h-4 w-4 rounded border-gray-700 bg-background-dark text-primary focus:ring-primary"/>
+              <span>Acepto los <a href="terminos.html" class="text-primary hover:underline">Términos y Condiciones</a> y la <a href="privacidad.html" class="text-primary hover:underline">Política de Privacidad</a></span>
+            </label>
+            <label class="flex items-start gap-2 text-sm text-gray-300 cursor-pointer">
+              <input type="checkbox" name="newsletter" class="mt-0.5 h-4 w-4 rounded border-gray-700 bg-background-dark text-primary focus:ring-primary"/>
+              <span>Quiero recibir promociones y novedades</span>
+            </label>
+          </div>
+          <div id="errorMsg" class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-3"></div>
+          <button type="submit" class="btn-primary w-full">Crear cuenta</button>
+        </form>
+
+        <p class="text-center text-sm text-gray-400 mt-6">
+          ¿Ya tienes cuenta? <a href="inicio-sesion.html" class="text-primary hover:text-primary-light font-semibold">Ingresa</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    function pageInit() {
+      const params = new URLSearchParams(window.location.search);
+      const plan = params.get('plan');
+      if (plan) {
+        const labels = { basica: 'Básica ($45.900/mes)', premium: 'Premium ($89.900/mes)', vip: 'VIP ($159.900/mes)' };
+        document.getElementById('planSelecto').classList.remove('hidden');
+        document.getElementById('planNombre').textContent = labels[plan] || plan;
+      }
+
+      const form = document.getElementById('registerForm');
+      const errorMsg = document.getElementById('errorMsg');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        if (data.password !== data.confirmPassword) {
+          errorMsg.textContent = 'Las contraseñas no coinciden.';
+          errorMsg.classList.remove('hidden');
+          return;
+        }
+        if (!data.terminos) {
+          errorMsg.textContent = 'Debes aceptar los términos y condiciones.';
+          errorMsg.classList.remove('hidden');
+          return;
+        }
+        const result = Auth.register(data);
+        if (!result.ok) {
+          errorMsg.textContent = result.error;
+          errorMsg.classList.remove('hidden');
+          return;
+        }
+        errorMsg.classList.add('hidden');
+        Auth.login(data.email, data.password);
+        UI.toast('Cuenta creada con éxito');
+        setTimeout(() => window.location.href = 'perfil.html', 800);
+      });
+    }
+  </script>
+</body>
+</html>

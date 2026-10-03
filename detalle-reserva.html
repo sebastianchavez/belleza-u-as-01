@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle de reserva · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div id="detailBox" class="max-w-4xl mx-auto"></div>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    function pageInit() {
+      if (!UI.requireAuth('detalle-reserva.html')) return;
+
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const reserva = id ? Reservas.get(id) : null;
+
+      if (!reserva) {
+        document.getElementById('detailBox').innerHTML = `
+          <div class="text-center py-20">
+            <p class="text-gray-400 mb-6">No se encontró la reserva.</p>
+            <a href="perfil.html" class="btn-primary">Ir a mi perfil</a>
+          </div>`;
+        return;
+      }
+
+      const user = Auth.current();
+      if (reserva.userId !== user.id) {
+        document.getElementById('detailBox').innerHTML = '<p class="text-center text-gray-400 py-20">No tienes acceso a esta reserva.</p>';
+        return;
+      }
+
+      const serv = UI.servicioById(reserva.servicioId);
+      const prof = UI.profesionalById(reserva.profesionalId);
+      const eb = UI.estadoBadge(reserva.estado);
+      const pb = UI.pagoBadge(reserva.pago);
+      const codigo = 'BPS-' + reserva.id.slice(-6).toUpperCase();
+      const past = UI.isPastDate(reserva.fecha);
+      const canCancel = !past && reserva.estado !== 'anulada' && reserva.estado !== 'completada';
+      const canPay = reserva.pago === 'pendiente' && reserva.estado !== 'anulada';
+
+      document.getElementById('detailBox').innerHTML = `
+        <div class="mb-6">
+          <a href="perfil.html" class="text-sm text-gray-400 hover:text-primary inline-flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Volver a mis reservas
+          </a>
+        </div>
+
+        <div class="bg-background-card border border-gray-800 rounded-2xl overflow-hidden">
+          <div class="relative h-48 sm:h-56">
+            <img src="${serv.imagen}" class="w-full h-full object-cover"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            <div class="absolute bottom-4 left-5 right-5 flex items-end justify-between gap-3 flex-wrap">
+              <div>
+                <p class="text-xs text-primary uppercase tracking-widest font-semibold">Servicio</p>
+                <h1 class="text-3xl font-bold text-white" style="font-family: 'Playfair Display', serif;">${serv.nombre}</h1>
+              </div>
+              <div class="flex gap-2 flex-wrap">
+                <span class="text-xs uppercase ${eb.cls} px-3 py-1 rounded-full border">${eb.label}</span>
+                <span class="text-xs uppercase ${pb.cls} px-3 py-1 rounded-full border">${pb.label}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 space-y-5">
+              <div class="flex items-center gap-4 pb-4 border-b border-gray-800">
+                <div class="h-10 w-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-400 uppercase tracking-wider">Manicurista</p>
+                  <div class="flex items-center gap-2">
+                    <img src="${prof.foto}" class="h-7 w-7 rounded-full object-cover border border-primary/30"/>
+                    <p class="text-white font-semibold">${prof.nombre}</p>
+                    <span class="text-primary text-xs">★ ${prof.rating}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-800">
+                <div class="flex items-center gap-3">
+                  <div class="h-10 w-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider">Fecha</p>
+                    <p class="text-white font-semibold">${UI.formatDate(reserva.fecha)}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="h-10 w-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider">Hora</p>
+                    <p class="text-white font-semibold">${reserva.hora}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Descripción del servicio</p>
+                <p class="text-gray-300">${serv.descripcion}</p>
+              </div>
+
+              <div class="pb-4 border-b border-gray-800">
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Categoría</p>
+                <p class="text-white">${UI.categoriaLabel(serv.categoria)} · ${serv.duracion} min de duración</p>
+              </div>
+
+              <div class="bg-background-dark/50 rounded-xl p-4 text-center">
+                <p class="text-xs text-primary uppercase tracking-widest font-semibold mb-1">Código de confirmación</p>
+                <p class="text-2xl font-bold text-primary tracking-widest" style="font-family: 'Playfair Display', serif;">${codigo}</p>
+              </div>
+            </div>
+
+            <aside class="md:col-span-1">
+              <div class="bg-background-dark/50 rounded-2xl p-5 space-y-2 sticky top-28">
+                <h3 class="text-base font-bold text-white mb-3">Resumen de pago</h3>
+                <div class="flex justify-between text-sm"><span class="text-gray-400">Servicio</span><span class="text-white">${UI.formatPrice(UI.reservaPrecio(reserva))}</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-400">Método de pago</span><span class="text-white">${reserva.metodoPago ? (reserva.metodoPago === 'webpay' ? 'Webpay' : reserva.metodoPago === 'tarjeta' ? 'Tarjeta' : reserva.metodoPago === 'transferencia' ? 'Transferencia' : 'Efectivo') : '—'}</span></div>
+                <div class="flex justify-between text-sm"><span class="text-gray-400">Estado</span><span class="${reserva.pago === 'pagado' ? 'text-emerald-400' : 'text-yellow-400'} font-medium">${pb.label}</span></div>
+                <div class="border-t border-gray-700 pt-3 mt-3 flex justify-between text-lg">
+                  <span class="text-white font-semibold">Total</span>
+                  <span class="text-primary text-2xl font-bold" style="font-family: 'Playfair Display', serif;">${UI.formatPrice(UI.reservaPrecio(reserva))}</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="px-6 md:px-8 pb-6 md:pb-8 border-t border-gray-800 pt-5 flex flex-wrap gap-3 justify-end">
+            <button id="btnCalendar" class="btn-outline text-sm">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              Añadir al calendario
+            </button>
+            ${canPay ? `<a href="pago.html?reserva=${reserva.id}" class="btn-primary text-sm">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+              Pagar reserva
+            </a>` : ''}
+            ${canCancel ? `<button id="btnAnular" class="btn-outline text-sm border-red-500/60 text-red-400 hover:bg-red-500 hover:text-white">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+              Anular reserva
+            </button>` : ''}
+          </div>
+        </div>
+
+        <div class="mt-8 bg-background-card border border-gray-800 rounded-2xl p-6">
+          <h3 class="text-base font-bold text-white mb-4">Historial de cambios</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex gap-3">
+              <div class="h-2 w-2 rounded-full bg-primary mt-1.5 flex-shrink-0"></div>
+              <div>
+                <p class="text-white">Reserva creada</p>
+                <p class="text-gray-500 text-xs">${new Date(reserva.createdAt).toLocaleString('es-CL')}</p>
+              </div>
+            </div>
+            ${reserva.pago === 'pagado' ? `<div class="flex gap-3">
+              <div class="h-2 w-2 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0"></div>
+              <div>
+                <p class="text-white">Pago realizado</p>
+                <p class="text-gray-500 text-xs">Estado: Pagado · ${reserva.metodoPago}</p>
+              </div>
+            </div>` : ''}
+            ${reserva.estado === 'anulada' ? `<div class="flex gap-3">
+              <div class="h-2 w-2 rounded-full bg-red-400 mt-1.5 flex-shrink-0"></div>
+              <div>
+                <p class="text-white">Reserva anulada</p>
+                <p class="text-gray-500 text-xs">La cita fue cancelada</p>
+              </div>
+            </div>` : ''}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('btnCalendar')?.addEventListener('click', () => {
+        const start = `${reserva.fecha}T${reserva.hora}:00`;
+        const endDate = new Date(start);
+        endDate.setMinutes(endDate.getMinutes() + serv.duracion);
+        const startStr = reserva.fecha.replace(/-/g, '') + 'T' + reserva.hora.replace(':', '') + '00';
+        const endStr = endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '').slice(0, 15);
+        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(serv.nombre + ' - Nails Studio')}&dates=${startStr}/${endStr}&details=${encodeURIComponent('Cita con ' + prof.nombre + ' en Nails Studio')}`;
+        window.open(url, '_blank');
+      });
+
+      document.getElementById('btnAnular')?.addEventListener('click', () => {
+        UI.modal(`
+          <h3 class="text-xl font-bold text-white mb-3" style="font-family: 'Playfair Display', serif;">Confirmar anulación</h3>
+          <p class="text-gray-300 mb-4">¿Estás segura que deseas anular tu cita de <span class="text-primary font-semibold">${serv.nombre}</span> con ${prof.nombre}?</p>
+          <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-5 text-xs text-yellow-300">
+            <p>Ten en cuenta que:</p>
+            <ul class="list-disc ml-4 mt-1 space-y-1">
+              <li>La anulación debe hacerse con al menos 24h de anticipación</li>
+              <li>Si ya realizaste el pago, debes solicitar el reembolso por contacto</li>
+            </ul>
+          </div>
+          <div class="flex gap-3">
+            <button data-close class="flex-1 px-4 py-2 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors">No, mantener</button>
+            <button data-confirm class="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors">Sí, anular</button>
+          </div>
+        `, {
+          onConfirm: () => {
+            Reservas.cancel(reserva.id);
+            UI.toast('Reserva anulada');
+            setTimeout(() => window.location.reload(), 600);
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>

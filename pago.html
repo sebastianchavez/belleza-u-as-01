@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pago · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="text-center mb-8">
+      <p class="text-primary uppercase tracking-[0.3em] text-xs mb-2 font-medium">Finalizar reserva</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-3" style="font-family: 'Playfair Display', serif;">Realizar pago</h1>
+      <p class="text-gray-400">Selecciona tu método de pago preferido</p>
+    </div>
+
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-background-card border border-gray-800 rounded-2xl p-6">
+          <h2 class="text-lg font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Método de pago</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="metodosPago"></div>
+        </div>
+
+        <div id="paymentDetails" class="bg-background-card border border-gray-800 rounded-2xl p-6"></div>
+
+        <div class="bg-background-card border border-gray-800 rounded-2xl p-6">
+          <label class="flex items-start gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="checkbox" id="terms" class="mt-0.5 h-4 w-4 rounded border-gray-700 bg-background-dark text-primary focus:ring-primary"/>
+            <span>Acepto los <a href="terminos.html" class="text-primary hover:underline">Términos y Condiciones</a> y confirmo que los datos ingresados son correctos.</span>
+          </label>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-1">
+        <div class="bg-background-card border border-primary/20 rounded-2xl p-6 sticky top-28">
+          <h3 class="text-lg font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Resumen del pago</h3>
+          <div id="resumenBox" class="space-y-3 text-sm"></div>
+          <div id="errorMsg" class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg p-3 mt-4"></div>
+          <button id="btnPagar" class="btn-primary w-full mt-6">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            Pagar ahora
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    const state = {
+      metodo: '',
+      cardNum: '', cardName: '', cardExp: '', cardCvv: '',
+      bankRef: ''
+    };
+
+    function renderMetodos() {
+      const box = document.getElementById('metodosPago');
+      box.innerHTML = METODOS_PAGO.map(m => `
+        <div class="payment-method flex items-center gap-3 ${state.metodo === m.id ? 'selected' : ''}" data-metodo="${m.id}">
+          <div class="h-10 w-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center text-primary flex-shrink-0">
+            ${iconSvg(m.icono, 'h-5 w-5')}
+          </div>
+          <p class="font-medium text-white text-sm">${m.nombre}</p>
+        </div>
+      `).join('');
+
+      box.querySelectorAll('.payment-method').forEach(el => {
+        el.addEventListener('click', () => {
+          box.querySelectorAll('.payment-method').forEach(x => x.classList.remove('selected'));
+          el.classList.add('selected');
+          state.metodo = el.dataset.metodo;
+          renderDetails();
+        });
+      });
+    }
+
+    function renderDetails() {
+      const box = document.getElementById('paymentDetails');
+      if (state.metodo === 'tarjeta') {
+        box.innerHTML = `
+          <h3 class="text-lg font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Datos de tarjeta</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="label-base">Número de tarjeta</label>
+              <input type="text" id="cardNum" class="input-base" placeholder="1234 5678 9012 3456" maxlength="19"/>
+            </div>
+            <div>
+              <label class="label-base">Nombre del titular</label>
+              <input type="text" id="cardName" class="input-base" placeholder="Como aparece en la tarjeta"/>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="label-base">Vencimiento</label>
+                <input type="text" id="cardExp" class="input-base" placeholder="MM/AA" maxlength="5"/>
+              </div>
+              <div>
+                <label class="label-base">CVV</label>
+                <input type="text" id="cardCvv" class="input-base" placeholder="123" maxlength="4"/>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="bg-background-dark border border-gray-800 rounded p-2 text-center"><span class="text-xs text-gray-400">VISA</span></div>
+              <div class="bg-background-dark border border-gray-800 rounded p-2 text-center"><span class="text-xs text-gray-400">Mastercard</span></div>
+              <div class="bg-background-dark border border-gray-800 rounded p-2 text-center"><span class="text-xs text-gray-400">Amex</span></div>
+            </div>
+          </div>`;
+        document.getElementById('cardNum').addEventListener('input', (e) => {
+          let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+          e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+          state.cardNum = e.target.value;
+        });
+        document.getElementById('cardExp').addEventListener('input', (e) => {
+          let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+          if (v.length >= 2) v = v.slice(0, 2) + '/' + v.slice(2);
+          e.target.value = v;
+          state.cardExp = v;
+        });
+        document.getElementById('cardCvv').addEventListener('input', (e) => { state.cardCvv = e.target.value.replace(/\D/g, '').slice(0, 4); });
+        document.getElementById('cardName').addEventListener('input', (e) => { state.cardName = e.target.value; });
+      } else if (state.metodo === 'webpay') {
+        box.innerHTML = `
+          <h3 class="text-lg font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Pago con Webpay</h3>
+          <p class="text-sm text-gray-300 mb-4">Serás redirigido a Webpay para completar tu pago de forma segura.</p>
+          <div class="bg-background-dark/50 rounded-xl p-4 border border-gray-800">
+            <p class="text-xs text-gray-400 mb-2">Aceptamos todas las tarjetas y bancos asociados a Webpay</p>
+            <div class="flex gap-2 flex-wrap">
+              <span class="text-xs bg-background-card px-3 py-1 rounded">VISA</span>
+              <span class="text-xs bg-background-card px-3 py-1 rounded">Mastercard</span>
+              <span class="text-xs bg-background-card px-3 py-1 rounded">Redcompra</span>
+            </div>
+          </div>`;
+      } else if (state.metodo === 'transferencia') {
+        box.innerHTML = `
+          <h3 class="text-lg font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Transferencia bancaria</h3>
+          <p class="text-sm text-gray-300 mb-4">Realiza la transferencia a la siguiente cuenta y sube el comprobante:</p>
+          <div class="bg-background-dark/50 rounded-xl p-4 space-y-2 text-sm border border-gray-800">
+            <p><span class="text-gray-400">Banco:</span> <span class="text-white">Banco de Chile</span></p>
+            <p><span class="text-gray-400">Tipo:</span> <span class="text-white">Cuenta Corriente</span></p>
+            <p><span class="text-gray-400">N° Cuenta:</span> <span class="text-white font-mono">00-123-45678-90</span></p>
+            <p><span class="text-gray-400">RUT:</span> <span class="text-white font-mono">76.123.456-7</span></p>
+            <p><span class="text-gray-400">Titular:</span> <span class="text-white">Nails Studio SpA</span></p>
+            <p><span class="text-gray-400">Email:</span> <span class="text-white">pagos@nailsstudio.cl</span></p>
+          </div>`;
+      } else if (state.metodo === 'efectivo') {
+        box.innerHTML = `
+          <h3 class="text-lg font-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Pago en efectivo</h3>
+          <p class="text-sm text-gray-300 mb-3">Puedes pagar en efectivo al momento de tu cita. Guarda tu número de reserva.</p>
+          <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-sm text-yellow-300">
+            <p class="font-semibold mb-1">Importante:</p>
+            <p>Llega 5-10 minutos antes de tu cita para realizar el pago y comenzar puntualmente.</p>
+          </div>`;
+      } else {
+        box.innerHTML = `<p class="text-sm text-gray-400">Selecciona un método de pago para continuar</p>`;
+      }
+    }
+
+    function pageInit() {
+      const params = new URLSearchParams(window.location.search);
+      const reservaId = params.get('reserva');
+      let reserva = reservaId ? Reservas.get(reservaId) : null;
+      if (!reserva) {
+        const draftRes = Reservas.getDraft();
+        if (draftRes && draftRes.servicioId) {
+          reserva = { servicioId: draftRes.servicioId, profesionalId: draftRes.profesionalId, fecha: draftRes.fecha, hora: draftRes.hora, precio: UI.servicioById(draftRes.servicioId).precio, id: 'draft' };
+        }
+      }
+      if (!reserva) {
+        document.querySelector('main').innerHTML = '<p class="text-center text-gray-400 py-20">No hay reserva para pagar.</p>';
+        return;
+      }
+
+      window._currentReserva = reserva;
+      const serv = UI.servicioById(reserva.servicioId);
+      const prof = UI.profesionalById(reserva.profesionalId);
+      document.getElementById('resumenBox').innerHTML = `
+        <div class="pb-3 border-b border-gray-800">
+          <p class="text-gray-400 text-xs uppercase mb-1">Servicio</p>
+          <p class="text-white font-semibold">${serv.nombre}</p>
+          <p class="text-xs text-gray-400 mt-1">${serv.duracion} min · ${UI.categoriaLabel(serv.categoria)}</p>
+        </div>
+        <div class="pb-3 border-b border-gray-800">
+          <p class="text-gray-400 text-xs uppercase mb-1">Manicurista</p>
+          <p class="text-white font-semibold">${prof ? prof.nombre : '—'}</p>
+        </div>
+        <div class="pb-3 border-b border-gray-800">
+          <p class="text-gray-400 text-xs uppercase mb-1">Fecha y hora</p>
+          <p class="text-white font-semibold">${reserva.fecha ? UI.formatDate(reserva.fecha) : '—'}</p>
+          <p class="text-white text-sm">${reserva.hora || '—'}</p>
+        </div>
+        <div class="pt-2 space-y-2">
+          <div class="flex justify-between text-sm"><span class="text-gray-400">Subtotal</span><span class="text-white">${UI.formatPrice(reserva.precio)}</span></div>
+          <div class="flex justify-between text-sm"><span class="text-gray-400">IVA incluido</span><span class="text-white">$0</span></div>
+          <div class="flex justify-between text-lg pt-2 border-t border-gray-800"><span class="text-white font-semibold">Total</span><span class="text-primary font-bold" style="font-family: 'Playfair Display', serif;">${UI.formatPrice(reserva.precio)}</span></div>
+        </div>
+      `;
+
+      renderMetodos();
+      renderDetails();
+
+      document.getElementById('btnPagar').addEventListener('click', () => {
+        const err = document.getElementById('errorMsg');
+        err.classList.add('hidden');
+        if (!state.metodo) {
+          err.textContent = 'Selecciona un método de pago.';
+          err.classList.remove('hidden');
+          return;
+        }
+        if (!document.getElementById('terms').checked) {
+          err.textContent = 'Debes aceptar los términos y condiciones.';
+          err.classList.remove('hidden');
+          return;
+        }
+        if (state.metodo === 'tarjeta') {
+          if (!state.cardNum || state.cardNum.replace(/\s/g, '').length < 16) {
+            err.textContent = 'Número de tarjeta incompleto.'; err.classList.remove('hidden'); return;
+          }
+          if (!state.cardName) {
+            err.textContent = 'Ingresa el nombre del titular.'; err.classList.remove('hidden'); return;
+          }
+          if (!state.cardExp || state.cardExp.length < 5) {
+            err.textContent = 'Fecha de vencimiento inválida.'; err.classList.remove('hidden'); return;
+          }
+          if (!state.cardCvv || state.cardCvv.length < 3) {
+            err.textContent = 'CVV inválido.'; err.classList.remove('hidden'); return;
+          }
+        }
+
+        Reservas.setPagoDraft({
+          reservaId: reserva.id,
+          metodo: state.metodo,
+          monto: reserva.precio,
+          timestamp: Date.now()
+        });
+
+        if (reserva.id && reserva.id !== 'draft') {
+          Reservas.markPaid(reserva.id, state.metodo);
+        }
+
+        setTimeout(() => window.location.href = 'pago-confirmado.html', 800);
+      });
+    }
+  </script>
+</body>
+</html>

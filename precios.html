@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precios · Nails Studio</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#e8a4b8', 'primary-light': '#f4c2c2', accent: '#d4a574', 'background-dark': '#0f0a0c', 'background-card': '#1a1418' },
+          fontFamily: { display: ['Playfair Display'], sans: ['Inter'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="precios" class="bg-background-dark text-gray-200 font-sans">
+  <div id="appHeader"></div>
+
+  <main>
+    <section class="py-20 border-b border-primary/10">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-primary uppercase tracking-[0.3em] text-xs mb-3 font-medium">Inversión en tu belleza</p>
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-6" style="font-family: 'Playfair Display', serif;">Precios & Membresías</h1>
+        <p class="text-gray-300 text-lg max-w-2xl mx-auto">Elige el plan perfecto para ti o reserva servicios individuales según tus necesidades.</p>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-3" style="font-family: 'Playfair Display', serif;">Membresías mensuales</h2>
+          <p class="text-gray-400">Ahorra con nuestros planes recurrentes</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div class="bg-background-card border border-gray-800 rounded-2xl p-8 hover:border-primary/40 transition-all">
+            <h3 class="text-2xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Básica</h3>
+            <p class="text-gray-400 text-sm mb-6">Ideal para empezar</p>
+            <p class="mb-6"><span class="text-4xl font-bold text-white" style="font-family: 'Playfair Display', serif;">$45.900</span><span class="text-gray-400">/mes</span></p>
+            <ul class="space-y-3 mb-8 text-sm text-gray-300">
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>2 manicuras al mes</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>15% en nail art</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Reserva prioritaria</li>
+              <li class="flex gap-2 text-gray-500"><svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Sin esculpidas</li>
+              <li class="flex gap-2 text-gray-500"><svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Sin pedicura spa</li>
+            </ul>
+            <a href="registro.html?plan=basica" class="block text-center btn-outline">Elegir plan</a>
+          </div>
+
+          <div class="bg-background-card border-2 border-primary rounded-2xl p-8 relative transform md:scale-105 shadow-2xl shadow-primary/20">
+            <span class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Más popular</span>
+            <h3 class="text-2xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Premium</h3>
+            <p class="text-gray-400 text-sm mb-6">Para las que cuidan su imagen</p>
+            <p class="mb-6"><span class="text-4xl font-bold text-primary" style="font-family: 'Playfair Display', serif;">$89.900</span><span class="text-gray-400">/mes</span></p>
+            <ul class="space-y-3 mb-8 text-sm text-gray-300">
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Manicuras ilimitadas</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>2 pedicuras spa</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Nail art incluido</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>20% en esculpidas</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Reserva prioritaria 24h</li>
+            </ul>
+            <a href="registro.html?plan=premium" class="block text-center btn-primary">Elegir Premium</a>
+          </div>
+
+          <div class="bg-background-card border border-gray-800 rounded-2xl p-8 hover:border-primary/40 transition-all">
+            <h3 class="text-2xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">VIP</h3>
+            <p class="text-gray-400 text-sm mb-6">Experiencia exclusiva total</p>
+            <p class="mb-6"><span class="text-4xl font-bold text-white" style="font-family: 'Playfair Display', serif;">$159.900</span><span class="text-gray-400">/mes</span></p>
+            <ul class="space-y-3 mb-8 text-sm text-gray-300">
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Todo ilimitado</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Atención a domicilio 2x/mes</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Productos premium incluidos</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Diseños personalizados</li>
+              <li class="flex gap-2"><svg class="h-5 w-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Asesora de belleza personal</li>
+            </ul>
+            <a href="registro.html?plan=vip" class="block text-center btn-outline">Elegir VIP</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 bg-background-card/40 border-y border-primary/10">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-3" style="font-family: 'Playfair Display', serif;">Precios por servicio</h2>
+          <p class="text-gray-400">Reserva servicios individuales sin membresía</p>
+        </div>
+        <div class="max-w-3xl mx-auto bg-background-card border border-gray-800 rounded-2xl overflow-hidden">
+          <div class="divide-y divide-gray-800" id="preciosList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="appFooter"></div>
+  <script src="main.js"></script>
+  <script>
+    function pageInit() {
+      const list = document.getElementById('preciosList');
+      list.innerHTML = SERVICIOS.map(s => `
+        <div class="flex items-center justify-between p-5 hover:bg-primary/5 transition-colors gap-4 flex-wrap">
+          <div class="flex items-center gap-4">
+            <img src="${s.imagen}" alt="${s.nombre}" class="h-14 w-14 rounded-lg" />
+            <div>
+              <h4 class="text-white font-semibold">${s.nombre}</h4>
+              <p class="text-gray-400 text-sm">${s.duracion} min · ${UI.categoriaLabel(s.categoria)}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-primary text-xl font-bold" style="font-family: 'Playfair Display', serif;">${UI.formatPrice(s.precio)}</span>
+            <a href="reserva.html?servicio=${s.id}" class="btn-primary text-xs px-4 py-2">Reservar</a>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
