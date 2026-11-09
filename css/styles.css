@@ -435,3 +435,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 }
+/* Keep long display headings within narrow phone viewports. */
+h1, h2 { overflow-wrap: anywhere; }
+
+@media (max-width: 479px) { .grid-cols-3 { column-gap: .75rem; } .grid-cols-3 p { overflow-wrap: anywhere; } }
